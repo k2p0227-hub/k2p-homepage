@@ -248,3 +248,36 @@ b.classList.toggle("on",sr.top<vh-220&&tr.top>vh-90)}
 b.addEventListener("click",function(){var t=target();if(!t)return;var y=t.getBoundingClientRect().top+window.scrollY-110;var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;window.scrollTo({top:y,behavior:rm?"auto":"smooth"})});
 window.addEventListener("scroll",upd,{passive:true});window.addEventListener("resize",upd);setInterval(upd,600);upd();
 }catch(e){}})();
+
+
+;(function(){
+var MAP={'#about':'About','#business':'Business','#projects':'Projects','#lp-gallery':'L&P Gallery','#product':'Product Dev.','#tech':'Technology','#why':'Why K2P','#process':'Process'};
+var css='header nav a[data-en]{position:relative;display:inline-block;text-align:center;white-space:nowrap}'
++'header nav a[data-en]::after{content:attr(data-en);position:absolute;left:0;right:0;top:50%;margin-top:-.62em;line-height:1.25;transform:translateY(-20%);opacity:0;transition:opacity .28s ease,transform .28s ease;color:#93c5fd;font-weight:500;pointer-events:none}'
++'header nav a[data-en]:hover{color:transparent!important;transition:color .2s ease}'
++'header nav a[data-en]:hover::after{opacity:1;transform:translateY(0)}'
++'header.bg-white\\/95 nav a[data-en]::after{color:#1e40af;font-weight:600}'
++'header.bg-white\\/95 nav a[data-en]:hover{background:#eef2ff!important}'
++'@media (prefers-reduced-motion:reduce){header nav a[data-en]::after{transition:none;transform:none}}';
+function setup(){
+  var links=document.querySelectorAll('header nav a');
+  if(!links.length) return false;
+  if(!document.getElementById('nav-en-hover')){var st=document.createElement('style');st.id='nav-en-hover';st.textContent=css;document.head.appendChild(st);}
+  var done=0;
+  links.forEach(function(a){
+    var en=MAP[a.getAttribute('href')]; if(!en) return;
+    a.setAttribute('data-en',en);
+    a.style.minWidth='';
+    var w=a.getBoundingClientRect().width, cs=getComputedStyle(a);
+    var p=document.createElement('span');
+    p.style.cssText='position:absolute;visibility:hidden;white-space:nowrap;font-weight:600;font-size:'+cs.fontSize+';font-family:'+cs.fontFamily;
+    p.textContent=en;document.body.appendChild(p);
+    var ew=p.getBoundingClientRect().width+20;p.remove();
+    a.style.minWidth=Math.max(w,ew)+'px'; done++;
+  });
+  return done>0;
+}
+var tries=0;
+function init(){ if(setup()||++tries>40) { if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setup); return;} setTimeout(init,150); }
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
